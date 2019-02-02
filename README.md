@@ -55,3 +55,12 @@ Built for andriod devices using java lang.
 [
 ![ni](https://user-images.githubusercontent.com/42347859/52158654-aa4dcf80-26ab-11e9-9b54-c2087fcb2e2b.jpg)
 ](url)
+
+
+
+
+
+
+[
+![day](https://user-images.githubusercontent.com/42347859/52158681-eed96b00-26ab-11e9-9e23-033fe0c42189.jpg)
+](url)
