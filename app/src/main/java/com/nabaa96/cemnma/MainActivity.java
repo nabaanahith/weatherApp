@@ -181,8 +181,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onLocationChanged(Location location) {
         lat = location.getLatitude();
         lng = location.getLongitude();
-        Log.d(TAG, "onLocationChanged: lat = " + lat);
-        Log.d(TAG, "onLocationChanged: lng = " + lng);
+
         if (hasInternet()) {
             showweather(lat, lng);
         } else {
@@ -192,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private void showweather(double lat, double lng) {
 
-        Log.d(TAG, "showweather: lat:" + lat + "lng :" + lng);
         preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
         final OpenWeatherMap apiservices = Clint.getRetrofit().create(OpenWeatherMap.class);
@@ -293,7 +291,6 @@ info.setApiscall(apiTimes);
     private void getOfflineData() {
         userWeather = dbHelper.getLastUserWeatherInfo();
 
-        Log.d(TAG, "getOfflineData: " + userWeather);
 
         txtcountry.setText(userWeather.getCountry());
         txtlastupdate.setText((Common.getdatenow()));
