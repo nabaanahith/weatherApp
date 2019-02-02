@@ -7,12 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.nabaa96.cemnma.Model.UserWeather;
 public class DbHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "user_weather.db";
+    private static final String DATABASE_NAME = "user_weather0.db";
     private static final int DATABASE_VERSION = 1;
     final String SQL_CREATE_TABLE = "CREATE TABLE " + UserContacts.FavoriteEntry.TABLE_NAME + " ("
             + UserContacts.FavoriteEntry.USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             UserContacts.FavoriteEntry.TEMP + " TEXT NOT NULL, " +
-            UserContacts.FavoriteEntry.CALLEDAPI + " TEXT NOT NULL, " +
+            UserContacts.FavoriteEntry.CALLEDAPI + " INTEGER , " +
             UserContacts.FavoriteEntry.COUNTRY + " TEXT NOT NULL, " +
             UserContacts.FavoriteEntry.SUN_SET + " TEXT NOT NULL, " +
             UserContacts.FavoriteEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL, " +
