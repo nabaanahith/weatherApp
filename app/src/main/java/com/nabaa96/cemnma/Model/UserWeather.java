@@ -5,6 +5,7 @@ package com.nabaa96.cemnma.Model;
  * this  sql table
  */
 public class UserWeather {
+    private String date;
     private String time;
     private String time2;
     private String description;
@@ -12,6 +13,33 @@ public class UserWeather {
     private int id = 0;
     private String humidity;
     private String Country;
+    private String City;
+    private String name;
+    private String lastupdate;
+    private String temp;
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public UserWeather(String date, String time, String time2, String description, int apiscall, int id, String humidity, String country, String city, String name, String lastupdate, String temp) {
+        this.date = date;
+        this.time = time;
+        this.time2 = time2;
+        this.description = description;
+        this.apiscall = apiscall;
+        this.id = id;
+        this.humidity = humidity;
+        Country = country;
+        City = city;
+        this.name = name;
+        this.lastupdate = lastupdate;
+        this.temp = temp;
+    }
 
     public int getApiscall() {
         return apiscall;
@@ -21,10 +49,7 @@ public class UserWeather {
         this.apiscall = apiscall;
     }
 
-    private String City;
-    private String name;
-    private String lastupdate;
-    private String temp;
+
     public String getTime() {
         return time;
     }
@@ -97,18 +122,7 @@ public class UserWeather {
         City = city;
     }
 
-    public UserWeather(int apiscall,String time, String time2, String description, int id, String humidity, String country, String city, String name, String lastupdate, String temp) {
-        this.time = time;
-        this.description = description;
-        this.id = id;
-        this.humidity = humidity;
-        Country = country;
-        City = city;
-        this.apiscall=apiscall;
-        this.name = name;
-        this.lastupdate = lastupdate;
-        this.temp = temp;
-    }
+
 
 
     public UserWeather() {

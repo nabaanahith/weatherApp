@@ -18,12 +18,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nabaa96.cemnma.SavingWeatherInfo.SavingWeatherDetails;
-import com.nabaa96.cemnma.common.Common;
 import com.nabaa96.cemnma.Model.UserWeather;
 import com.nabaa96.cemnma.Model.WeatherResponse;
+import com.nabaa96.cemnma.SavingWeatherInfo.SavingWeatherDetails;
 import com.nabaa96.cemnma.api.Clint;
 import com.nabaa96.cemnma.api.OpenWeatherMap;
+import com.nabaa96.cemnma.common.Common;
 import com.nabaa96.cemnma.db.DbHelper;
 
 import java.util.Locale;
@@ -50,10 +50,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public static final String PREF_NAME = "app_pref";
     Handler handler = new Handler();
 
-   Runnable runnable = new Runnable() {
-       @Override
+    Runnable runnable = new Runnable() {
+        @Override
         public void run() {
-           //for view all items that head in first time "animation"
+            //for view all items that head in first time "animation"
             temperature.setVisibility(View.VISIBLE);
             country.setVisibility(View.VISIBLE);
             description.setVisibility(View.VISIBLE);
@@ -62,20 +62,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             sunRise.setVisibility(View.VISIBLE);
             humidity.setVisibility(View.VISIBLE);
             linear.setVisibility(View.VISIBLE);
-             view.setVisibility(View.VISIBLE);
-       }
-   };
+            view.setVisibility(View.VISIBLE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int currentTime=Integer.parseInt(Common.getdatenow2());
+        int currentTime = Integer.parseInt(Common.getdatenow2());
         //for inteface
-        if(currentTime<=6) {
+        if (currentTime >= 18 || currentTime <= 4) {
             setContentView(R.layout.night);
-        }
-        else
-        {
+        } else {
             setContentView(R.layout.activity_main);
         }
         InitializeWidgets();
@@ -86,10 +84,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         handler.postDelayed(runnable, 3000);
         //getcurrent location
-        GetLocationManager();
+        getLocationManager();
     }
 
-    private void GetLocationManager() {
+    private void getLocationManager() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{
@@ -119,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     private void InitializeWidgets() {
-        view=findViewById(R.id.view);
+        view = findViewById(R.id.view);
         currentDate = findViewById(R.id.txtlastupdate);
         description = findViewById(R.id.txtdescription);
         humidity = findViewById(R.id.txthummunity);
@@ -131,16 +129,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     @Override
-       protected void onPause() {
-           super.onPause();
-           locationManager.removeUpdates(this);
-       }
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
 
     @Override
     public void onLocationChanged(Location location) {
         lat = location.getLatitude();
         lng = location.getLongitude();
-            //checking if internet connection is valid
+
+        //checking if internet connection is valid
         if (hasInternet()) {
             GetWeatherInformation(lat, lng);
         } else {
@@ -151,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private void GetWeatherInformation(double lat, double lng) {
 
-
         final OpenWeatherMap apiServices = Clint.getRetrofit().create(OpenWeatherMap.class);
         Call<WeatherResponse> call = apiServices.getWeatherbylatlang(String.valueOf(lat), String.valueOf(lng), Common.API_KEY, "metric");
         call.enqueue(new Callback<WeatherResponse>() {
@@ -161,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 apiTimes = info.getApiscall();
                 apiTimes++;
                 info.setApiscall(apiTimes);
-
                 // check if response is success
                 if (!response.isSuccessful() || response.body() == null)
                     return;
@@ -177,12 +174,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 String sunrise = Common.unixTimeTDateTime(Double.valueOf(weatherResponse.getSys().getSunrise()));
                 String temp = weatherResponse.getMain().getTemp();
 
-                //set text view
-                ShowWeatherDetails(MainActivity.this, city, country, dateNow, description, humidity, sunset, sunrise, temp);
                 //save in Sqlite DB, by object call "info"
                 SavingWeatherDetails.SaveWeatherDetailsInDB(dbHelper, info, city, country, dateNow, description, humidity, sunset, sunrise, temp);
                 //now save data using preferences :)
                 SavingWeatherDetails.SaveWeatherDetailsInPref(getApplicationContext(), info);
+                //set text view
+
+                ShowWeatherDetails(MainActivity.this, city, country, dateNow, description, humidity, sunset, sunrise, temp);
+
             }
 
             @Override
@@ -225,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private void getOfflineData() {
         userWeather = dbHelper.getLastUserWeatherInfo();
         country.setText(userWeather.getCountry());
-        currentDate.setText((Common.getdatenow()));
+        currentDate.setText((userWeather.getLastupdate()));
         description.setText(userWeather.getDescription());
         humidity.setText(userWeather.getHumidity());
         sunRise.setText(userWeather.getTime2());
