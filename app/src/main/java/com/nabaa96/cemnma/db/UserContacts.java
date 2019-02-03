@@ -10,7 +10,7 @@ public class UserContacts {
             public  static final  String COLUMN_NAME="name";
             public  static final  String COLUMN_DESCRIPTION="description";
             public  static final  String POSTER_LASTUPDATE="lastupdate";
-            public  static final  String COLUMN_HUMMINITY="humminity";
+            public  static final  String COLUMN_HUMMINITY="humidity";
             public  static final  String SUN_SET="sunset";
             public  static  final String TIME="sunrise";
             public  static  final String TEMP="tempreture";

@@ -20,4 +20,9 @@ public class Common {
         }
 
 
+    public static String getdatenow2() {
+        DateFormat dateFormat = new SimpleDateFormat("HH",Locale.US);
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
 }
