@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 public class UserContacts {
 
     public static  final  class  FavoriteEntry implements BaseColumns {
-            public  static final  String TABLE_NAME="userweather";
+            public  static final  String TABLE_NAME="userweatherr";
             public  static final  String USER_ID="userid";
             public  static final  String COLUMN_NAME="name";
             public  static final  String COLUMN_DESCRIPTION="description";

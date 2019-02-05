@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.nabaa96.cemnma.Model.UserWeather;
 public class DbHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "user_weather0.db";
+    private static final String DATABASE_NAME = "user_weather00.db";
     private static final int DATABASE_VERSION = 1;
     final String SQL_CREATE_TABLE = "CREATE TABLE " + UserContacts.FavoriteEntry.TABLE_NAME + " ("
             + UserContacts.FavoriteEntry.USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -32,6 +32,19 @@ public class DbHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE);
 
+        ContentValues values = new ContentValues();
+        values.put(UserContacts.FavoriteEntry.TEMP," ");
+        values.put(UserContacts.FavoriteEntry.CALLEDAPI, "");
+        values.put(UserContacts.FavoriteEntry.COUNTRY, " ");
+        values.put(UserContacts.FavoriteEntry.COLUMN_DESCRIPTION," ");
+        values.put(UserContacts.FavoriteEntry.POSTER_LASTUPDATE, " ");
+        values.put(UserContacts.FavoriteEntry.TIME, " ");
+        values.put(UserContacts.FavoriteEntry.COLUMN_NAME, " ");
+        values.put(UserContacts.FavoriteEntry.SUN_SET, " ");
+        values.put(UserContacts.FavoriteEntry.COLUMN_HUMMINITY," ");
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.insert(UserContacts.FavoriteEntry.TABLE_NAME, null, values);
+
     }
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int il) {
@@ -52,7 +65,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(UserContacts.FavoriteEntry.SUN_SET, weather.getTime2());
         values.put(UserContacts.FavoriteEntry.COLUMN_HUMMINITY, weather.getHumidity());
         SQLiteDatabase db = this.getWritableDatabase();
-        db.insert(UserContacts.FavoriteEntry.TABLE_NAME, null, values);
+db.update(UserContacts.FavoriteEntry.TABLE_NAME, values, "userid="+1, null);
         db.close();
 
     }

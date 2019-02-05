@@ -11,13 +11,23 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.nabaa96.cemnma.MainActivity.PREF_NAME;
 
 public class SavingWeatherDetails {
+public  static SharedPreferences preferences;
     public static void SaveWeatherDetailsInPref(Context context, UserWeather info) {
-        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+      preferences = context.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = preferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(info);
         prefsEditor.putString(PREF_NAME, json);
-        prefsEditor.apply();
+        prefsEditor.commit();
+
+//       json = preferences.getString(PREF_NAME, "");
+//        UserWeather obj = gson.fromJson(json, UserWeather.class);
+
+
+
+
+
+
     }
 
     public static void SaveWeatherDetailsInDB(DbHelper dbHelper, UserWeather info ,String city, String country, String dateNow, String description, String humminty, String sunset, String sunrise, String temp) {
@@ -29,6 +39,7 @@ public class SavingWeatherDetails {
         info.setHumidity(humminty);
         info.setTime(sunset);
         info.setTime2(sunrise);
+
         dbHelper.saveUserWeatherInfo(info);
     }
 

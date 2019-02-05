@@ -2,6 +2,7 @@ package com.nabaa96.cemnma;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.nabaa96.cemnma.Model.UserWeather;
 import com.nabaa96.cemnma.Model.WeatherResponse;
 import com.nabaa96.cemnma.SavingWeatherInfo.SavingWeatherDetails;
@@ -33,6 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.nabaa96.cemnma.SavingWeatherInfo.SavingWeatherDetails.ShowWeatherDetails;
+import static com.nabaa96.cemnma.SavingWeatherInfo.SavingWeatherDetails.preferences;
 
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
@@ -49,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     static double lat, lng;
     public static final String PREF_NAME = "app_pref";
     Handler handler = new Handler();
-
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -211,18 +214,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private boolean hasInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(CONNECTIVITY_SERVICE);
-
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        if (info == null)
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo =  connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
+                    return true;
+                }
+                Toast.makeText(getApplicationContext(), "check your internet please !", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            Toast.makeText(getApplicationContext(), "check your internet please!", Toast.LENGTH_SHORT).show();
             return false;
-        return info.isConnected();
+        }
+        Toast.makeText(getApplicationContext(), "check your internet please !", Toast.LENGTH_SHORT).show();
+return false;
 
 
     }
 
     //if user dont have connection will data retrieve from database according to previous state of weather
     private void getOfflineData() {
-        userWeather = dbHelper.getLastUserWeatherInfo();
+    userWeather = dbHelper.getLastUserWeatherInfo();
         country.setText(userWeather.getCountry());
         currentDate.setText((userWeather.getLastupdate()));
         description.setText(userWeather.getDescription());
@@ -231,6 +243,30 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         sunSet.setText(userWeather.getTime());
         String temp = userWeather.getTemp();
         temperature.setText(String.format(Locale.US, "%s C°", temp));
+
+   /*
+
+   //to retrve from prefrences
+   Gson gson = new Gson();
+        SharedPreferences preferences=getSharedPreferences(PREF_NAME,MODE_PRIVATE);
+
+        String json = preferences.getString(PREF_NAME, "");
+       UserWeather obj = gson.fromJson(json, UserWeather.class);
+
+        country.setText(obj.getCountry());
+        currentDate.setText((obj.getLastupdate()));
+        description.setText(obj.getDescription());
+        humidity.setText(obj.getHumidity());
+        sunRise.setText(obj.getTime2());
+        sunSet.setText(obj.getTime());
+        String temp = obj.getTemp();
+        temperature.setText(String.format(Locale.US, "%s C°", temp));
+
+*/
+
+
+
+
     }
 }
 
