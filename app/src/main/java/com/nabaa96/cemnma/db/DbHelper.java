@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.nabaa96.cemnma.Model.UserWeather;
 public class DbHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "user_weather00.db";
+    private static final String DATABASE_NAME = "user_weather001.db";
     private static final int DATABASE_VERSION = 1;
     final String SQL_CREATE_TABLE = "CREATE TABLE " + UserContacts.FavoriteEntry.TABLE_NAME + " ("
             + UserContacts.FavoriteEntry.USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -24,9 +24,11 @@ public class DbHelper extends SQLiteOpenHelper {
             "); ";
     String Query2 = "select * from " + UserContacts.FavoriteEntry.TABLE_NAME;
 
+
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
@@ -42,8 +44,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(UserContacts.FavoriteEntry.COLUMN_NAME, " ");
         values.put(UserContacts.FavoriteEntry.SUN_SET, " ");
         values.put(UserContacts.FavoriteEntry.COLUMN_HUMMINITY," ");
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.insert(UserContacts.FavoriteEntry.TABLE_NAME, null, values);
+        sqLiteDatabase.insert(UserContacts.FavoriteEntry.TABLE_NAME, null, values);
 
     }
     @Override
@@ -64,6 +65,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(UserContacts.FavoriteEntry.COLUMN_NAME, weather.getCity());
         values.put(UserContacts.FavoriteEntry.SUN_SET, weather.getTime2());
         values.put(UserContacts.FavoriteEntry.COLUMN_HUMMINITY, weather.getHumidity());
+      //  SQLiteDatabase db = this.getWritableDatabase();
         SQLiteDatabase db = this.getWritableDatabase();
 db.update(UserContacts.FavoriteEntry.TABLE_NAME, values, "userid="+1, null);
         db.close();
