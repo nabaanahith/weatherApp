@@ -2,8 +2,11 @@ package com.nabaa96.cemnma;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,8 +15,11 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -35,11 +41,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.nabaa96.cemnma.SavingWeatherInfo.SavingWeatherDetails.ShowWeatherDetails;
 import static com.nabaa96.cemnma.SavingWeatherInfo.SavingWeatherDetails.preferences;
 
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
+    private static final int REQUST_PERMISSIONS_CODE = 827;
     public TextView currentDate, description, humidity, sunRise, temperature, country, sunSet;
     LinearLayout linear;
     private View view;
@@ -51,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private DbHelper dbHelper;
     int REQUEST_CODE = 0;
     static double lat, lng;
+
+    private String provider;
     public static final String PREF_NAME = "app_pref";
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
@@ -98,15 +108,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.SYSTEM_ALERT_WINDOW,
             }, REQUEST_CODE);
+
+            return;
         }
 
         // first we request location and may  onLocationChanged invoket or not this depand on if
         // location of user has change
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER
+
+        provider = locationManager.getBestProvider(new Criteria(), false);
+
+        if (provider == null) {
+            provider = NETWORK_PROVIDER;
+        }
+        locationManager.requestLocationUpdates(NETWORK_PROVIDER
                 , 0, 0, this);
 
         // here we get last location my wil be iraq or any where .. last location
-        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
 
         // here if the last location unknowing ,we request again if not
         if (location != null) {
@@ -114,9 +132,35 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         } else {
             // request location again
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+            locationManager.requestLocationUpdates(NETWORK_PROVIDER,
                     0, 0, this, getMainLooper());
+
+            buildPermissionsAlert();
+
         }
+    }
+
+    private void buildPermissionsAlert() {
+
+        new AlertDialog.Builder(this)
+                .setMessage("please open your location")
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                                REQUST_PERMISSIONS_CODE);
+
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MainActivity.this, "you need permissions", Toast.LENGTH_SHORT).show();
+                    }
+                }).show();
+
     }
 
     private void InitializeWidgets() {
@@ -138,7 +182,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location)
+    {
         lat = location.getLatitude();
         lng = location.getLongitude();
 
@@ -149,6 +194,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             //if not,get last state
             getOfflineData();
         }
+
+        locationManager.removeUpdates(this);
     }
 
     private void GetWeatherInformation(double lat, double lng) {
@@ -215,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
-            NetworkInfo networkInfo =  connectivityManager.getActiveNetworkInfo();
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
             if (networkInfo != null) {
                 if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
                     return true;
@@ -227,14 +274,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             return false;
         }
         Toast.makeText(getApplicationContext(), "check your internet please !", Toast.LENGTH_SHORT).show();
-return false;
+        return false;
 
 
     }
 
     //if user dont have connection will data retrieve from database according to previous state of weather
     private void getOfflineData() {
-    userWeather = dbHelper.getLastUserWeatherInfo();
+        userWeather = dbHelper.getLastUserWeatherInfo();
         country.setText(userWeather.getCountry());
         currentDate.setText((userWeather.getLastupdate()));
         description.setText(userWeather.getDescription());
@@ -265,8 +312,16 @@ return false;
 */
 
 
+    }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUST_PERMISSIONS_CODE && resultCode == RESULT_OK) {
+            getLocationManager();
+        }
     }
 }
 
