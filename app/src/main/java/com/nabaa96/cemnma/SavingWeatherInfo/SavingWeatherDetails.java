@@ -12,18 +12,15 @@ import static com.nabaa96.cemnma.MainActivity.PREF_NAME;
 
 public class SavingWeatherDetails {
 public  static SharedPreferences preferences;
+public static final String USER_WEATHER_PREF_KEY = "user_weather_info";
+
     public static void SaveWeatherDetailsInPref(Context context, UserWeather info) {
       preferences = context.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = preferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(info);
-        prefsEditor.putString(PREF_NAME, json);
-        prefsEditor.commit();
-
-//       json = preferences.getString(PREF_NAME, "");
-//        UserWeather obj = gson.fromJson(json, UserWeather.class);
-
-
+        prefsEditor.putString(USER_WEATHER_PREF_KEY, json);
+        prefsEditor.apply();
 
 
 
